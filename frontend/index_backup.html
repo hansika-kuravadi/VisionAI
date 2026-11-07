@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI - AI Video Generator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            min-height: 100vh;
+            background: #0b1020;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 35px auto;
+            padding: 35px;
+            background: #151d32;
+            border: 1px solid #293653;
+            border-radius: 18px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aab6cc;
+            margin-bottom: 35px;
+        }
+
+        label {
+            display: block;
+            margin: 22px 0 10px;
+            font-weight: bold;
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #354463;
+            border-radius: 9px;
+            background: #0d1528;
+            color: white;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 28px;
+            padding: 16px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #6555e8, #a34de5);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 22px;
+            text-align: center;
+            color: #b9c7e5;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .preview {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid #354463;
+        }
+
+        .preview h2 {
+            text-align: center;
+        }
+
+        video {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 12px;
+            background: black;
+        }
+
+        #download {
+            display: none;
+            margin-top: 18px;
+            padding: 14px;
+            background: #247b55;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 9px;
+        }
+
+        .placeholder {
+            padding: 45px 15px;
+            text-align: center;
+            background: #0d1528;
+            border-radius: 12px;
+            color: #9aa8c1;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #8794ac;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>🎬 Create Videos with AI</h1>
+
+        <p class="subtitle">
+            Turn your imagination into amazing videos.
+            Just enter a prompt and let AI do the magic.
+        </p>
+
+        <label for="prompt">Describe your video</label>
+
+        <textarea
+            id="prompt"
+            placeholder="Example: A customer enters a beautiful modern restaurant..."
+        ></textarea>
+
+        <label for="duration">Video Duration</label>
+
+        <select id="duration">
+            <option value="5">5 Seconds</option>
+            <option value="10">10 Seconds</option>
+        </select>
+
+        <label for="style">Video Style</label>
+
+        <select id="style">
+            <option value="cinematic">Cinematic</option>
+            <option value="realistic">Realistic</option>
+            <option value="anime">Anime</option>
+            <option value="3d">3D Animation</option>
+        </select>
+
+        <button id="generate" onclick="generateVideo()">
+            ✨ Generate Video
+        </button>
+
+        <p id="status" role="status" aria-live="polite">
+            Enter a prompt to get started.
+        </p>
+
+        <section class="preview">
+
+            <h2>Video Preview</h2>
+
+            <div class="placeholder" id="placeholder">
+                Your generated video will appear here.
+            </div>
+
+            <video id="video" controls playsinline></video>
+
+            <a id="download" href="#" target="_blank"
+               rel="noopener">
+                ⬇ Open or Download Your Video
+            </a>
+
+        </section>
+
+        <footer>
+            © 2026 VisionAI | Create Without Limits
+        </footer>
+
+    </main>
+
+    <script>
+        async function generateVideo() {
+
+            const prompt = document.getElementById("prompt").value.trim();
+            const duration = document.getElementById("duration").value;
+            const style = document.getElementById("style").value;
+
+            const button = document.getElementById("generate");
+            const status = document.getElementById("status");
+            const video = document.getElementById("video");
+            const download = document.getElementById("download");
+            const placeholder = document.getElementById("placeholder");
+
+            if (!prompt) {
+                status.innerText = "Please enter a video description.";
+                return;
+            }
+
+            button.disabled = true;
+            button.innerText = "⏳ Generating your video...";
+
+            status.innerText =
+                "Your request has been sent to the AI model. Video generation may take several minutes. Please wait...";
+
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+
+            video.style.display = "none";
+            download.style.display = "none";
+            placeholder.style.display = "block";
+
+            try {
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/generate",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            duration: Number(duration),
+                            style: style
+                        })
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.detail || result.error || "Video generation failed."
+                    );
+                }
+
+                if (!result.video_url) {
+                    throw new Error("The AI service did not return a video URL.");
+                }
+
+                video.src = result.video_url;
+                video.style.display = "block";
+                placeholder.style.display = "none";
+
+                download.href = result.video_url;
+                download.style.display = "block";
+
+                status.innerText =
+                    "🎉 Video generated successfully! Your video is ready.";
+
+                video.load();
+
+            } catch (error) {
+
+                status.innerText =
+                    "Error: " + error.message;
+
+                console.error(error);
+
+            } finally {
+
+                button.disabled = false;
+                button.innerText = "✨ Generate Video";
+
+            }
+        }
+    </script>
+
+</body>
+</html>
