@@ -2,458 +2,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VisionAI - Free Video Creator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI - Free Video Creator</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-body {
-    margin: 0;
-    padding: 25px 15px;
-    min-height: 100vh;
-    background: #0b1020;
-    color: white;
-    font-family: Arial, sans-serif;
-}
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #101323;
+            color: white;
+        }
 
-.container {
-    max-width: 850px;
-    margin: 25px auto;
-    padding: 30px;
-    background: #151d32;
-    border: 1px solid #293653;
-    border-radius: 18px;
-}
+        .container {
+            max-width: 850px;
+            margin: auto;
+            padding: 30px;
+            background: #1b2036;
+            border-radius: 16px;
+        }
 
-h1, h2 {
-    text-align: center;
-}
+        h1 {
+            text-align: center;
+            color: #8b9cff;
+        }
 
-.subtitle {
-    text-align: center;
-    color: #aab6cc;
-    line-height: 1.6;
-}
+        .subtitle {
+            text-align: center;
+            color: #c5c9dc;
+            margin-bottom: 30px;
+        }
 
-label {
-    display: block;
-    margin: 22px 0 10px;
-    font-weight: bold;
-}
+        label {
+            display: block;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
 
-input, textarea, select {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #354463;
-    border-radius: 9px;
-    background: #0d1528;
-    color: white;
-    font-size: 15px;
-}
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #555d7c;
+            background: #252c45;
+            color: white;
+        }
 
-input[type="file"] {
-    cursor: pointer;
-}
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #687cff;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-textarea {
-    min-height: 110px;
-    resize: vertical;
-}
+        button:hover {
+            background: #5266ed;
+        }
 
-button, .download {
-    display: block;
-    width: 100%;
-    margin-top: 22px;
-    padding: 15px;
-    border: none;
-    border-radius: 9px;
-    background: linear-gradient(90deg, #6555e8, #a34de5);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-}
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-#status {
-    margin-top: 20px;
-    text-align: center;
-    color: #b9c7e5;
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
+        .preview-item {
+            background: #252c45;
+            padding: 10px;
+            border-radius: 10px;
+        }
 
-#imageCount {
-    color: #aab6cc;
-    margin-top: 12px;
-}
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 7px;
+        }
 
-#imageList {
-    color: #b9c7e5;
-    line-height: 1.8;
-    overflow-wrap: anywhere;
-}
+        .preview-item input {
+            margin-top: 8px;
+        }
 
-.preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-    margin-top: 15px;
-}
+        .status {
+            margin-top: 20px;
+            text-align: center;
+            color: #aebaff;
+        }
 
-.preview-grid img {
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    border-radius: 9px;
-    border: 1px solid #354463;
-}
+        .video-section {
+            margin-top: 35px;
+            text-align: center;
+        }
 
-.preview {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #354463;
-}
+        video {
+            width: 100%;
+            max-height: 450px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
 
-video {
-    display: none;
-    width: 100%;
-    margin-top: 20px;
-    border-radius: 12px;
-    background: black;
-}
+        .download {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 12px 25px;
+            background: #20a878;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
 
-.download {
-    display: none;
-    background: #247b55;
-}
+        .note {
+            margin-top: 25px;
+            color: #aeb5ce;
+            font-size: 13px;
+            text-align: center;
+        }
 
-.info {
-    margin-top: 20px;
-    padding: 15px;
-    background: #0d1528;
-    border-radius: 10px;
-    color: #b9c7e5;
-    line-height: 1.6;
-}
-
-footer {
-    margin-top: 30px;
-    text-align: center;
-    color: #8794ac;
-    font-size: 13px;
-}
-
-@media(max-width: 600px) {
-    .container {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 27px;
-    }
-}
-</style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
 
-<main class="container">
+<div class="container">
 
-<h1>🎬 VisionAI</h1>
+    <h1>🎬 VisionAI</h1>
 
-<p class="subtitle">
-Create videos from your own images without paying API credits.
-</p>
+    <p class="subtitle">
+        Create videos from your own images for free.
+        Upload pictures, add captions and generate an MP4 video.
+    </p>
 
-<div class="info">
-<strong>Free Video Creator</strong><br>
-Upload up to 20 pictures, add captions and create a downloadable MP4 video.
+    <label for="images">📸 Upload Images (Maximum 20)</label>
+    <input type="file" id="images" accept="image/*" multiple>
+
+    <p id="imageCount">No images selected.</p>
+
+    <div id="previewGrid" class="preview-grid"></div>
+
+    <label for="duration">⏱️ Duration Per Image</label>
+
+    <select id="duration">
+        <option value="2">2 Seconds</option>
+        <option value="3" selected>3 Seconds</option>
+        <option value="5">5 Seconds</option>
+        <option value="10">10 Seconds</option>
+    </select>
+
+    <button id="createBtn" onclick="createVideo()">
+        🎥 Create Free Video
+    </button>
+
+    <p id="status" class="status"></p>
+
+    <div id="videoSection" class="video-section hidden">
+
+        <h2>🎬 Video Preview</h2>
+
+        <video id="video" controls></video>
+
+        <br>
+
+        <a id="download" class="download" download="visionai_video.mp4">
+            ⬇️ Download Video
+        </a>
+
+    </div>
+
+    <p class="note">
+        VisionAI uses your uploaded images to create a slideshow video.
+        This free version does not generate new AI video footage.
+    </p>
+
 </div>
-
-<label for="images">Upload Images (maximum 20)</label>
-
-<input
-    type="file"
-    id="images"
-    accept="image/png,image/jpeg,image/webp"
-    multiple
->
-
-<p id="imageCount">No images selected.</p>
-
-<ul id="imageList"></ul>
-
-<div id="imagePreviews" class="preview-grid"></div>
-
-<label for="captions">Scene Captions</label>
-
-<textarea
-    id="captions"
-    placeholder="Enter one caption per line, in the same order as your images."
-></textarea>
-
-<label for="duration">Duration per Image</label>
-
-<select id="duration">
-    <option value="2">2 Seconds</option>
-    <option value="3" selected>3 Seconds</option>
-    <option value="5">5 Seconds</option>
-    <option value="10">10 Seconds</option>
-</select>
-
-<button id="generate" onclick="createVideo()">
-🎥 Create Free Video
-</button>
-
-<p id="status" role="status" aria-live="polite">
-Select your images to get started.
-</p>
-
-<section class="preview">
-
-<h2>Video Preview</h2>
-
-<video id="video" controls playsinline></video>
-
-<a
-    id="download"
-    class="download"
-    href="#"
-    download="VisionAI.mp4"
->
-⬇ Download Your MP4 Video
-</a>
-
-</section>
-
-<div class="info">
-<strong>AI Video Generation</strong><br>
-Optional AI text-to-video generation is a separate feature. The current creator makes videos from your uploaded images without API credits.
-</div>
-
-<footer>
-© 2026 VisionAI | Free Local Video Creator
-</footer>
-
-</main>
 
 <script>
+    // Your deployed Render backend
+    const API_BASE_URL = "https://visionai-backend-85ux.onrender.com";
 
-const imageInput = document.getElementById("images");
-
-imageInput.addEventListener("change", function() {
-
-    const files = this.files;
-
+    const imageInput = document.getElementById("images");
+    const previewGrid = document.getElementById("previewGrid");
     const imageCount = document.getElementById("imageCount");
-    const imageList = document.getElementById("imageList");
-    const imagePreviews = document.getElementById("imagePreviews");
+    const statusText = document.getElementById("status");
+    const createBtn = document.getElementById("createBtn");
 
-    imageList.innerHTML = "";
-    imagePreviews.innerHTML = "";
+    let selectedFiles = [];
 
-    if (files.length > 20) {
+    imageInput.addEventListener("change", function () {
 
-        alert("Please select a maximum of 20 images.");
+        selectedFiles = Array.from(this.files);
 
-        this.value = "";
+        previewGrid.innerHTML = "";
 
-        imageCount.innerText = "No images selected.";
-
-        return;
-    }
-
-    for (const file of files) {
-
-        if (!file.type.startsWith("image/") ||
-            !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-
-            alert("Please select only JPG, PNG or WEBP images.");
-
+        if (selectedFiles.length > 20) {
+            alert("Please select a maximum of 20 images.");
             this.value = "";
-            imageCount.innerText = "No images selected.";
-            imageList.innerHTML = "";
-            imagePreviews.innerHTML = "";
-
+            selectedFiles = [];
+            imageCount.textContent = "No images selected.";
             return;
         }
 
-        if (file.size > 10 * 1024 * 1024) {
+        imageCount.textContent =
+            selectedFiles.length + " image(s) selected.";
 
-            alert("Each image must be smaller than 10 MB.");
+        selectedFiles.forEach((file, index) => {
 
-            this.value = "";
-            imageCount.innerText = "No images selected.";
-            imageList.innerHTML = "";
-            imagePreviews.innerHTML = "";
+            const reader = new FileReader();
 
+            reader.onload = function (event) {
+
+                const item = document.createElement("div");
+                item.className = "preview-item";
+
+                const img = document.createElement("img");
+                img.src = event.target.result;
+
+                const caption = document.createElement("input");
+                caption.type = "text";
+                caption.placeholder = "Scene " + (index + 1) + " caption";
+                caption.className = "caption";
+
+                item.appendChild(img);
+                item.appendChild(caption);
+
+                previewGrid.appendChild(item);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+
+    async function createVideo() {
+
+        if (selectedFiles.length === 0) {
+            alert("Please upload at least one image.");
             return;
         }
-    }
 
-    imageCount.innerText =
-        files.length + " image(s) selected.";
+        createBtn.disabled = true;
+        createBtn.textContent = "Creating Video...";
 
-    for (const file of files) {
+        statusText.textContent =
+            "Connecting to VisionAI server. Please wait...";
 
-        const item = document.createElement("li");
+        document.getElementById("videoSection").classList.add("hidden");
 
-        item.textContent = file.name;
+        const formData = new FormData();
 
-        imageList.appendChild(item);
+        selectedFiles.forEach(file => {
+            formData.append("images", file);
+        });
 
-        const image = document.createElement("img");
+        const captions = Array.from(
+            document.querySelectorAll(".caption")
+        ).map(input => input.value || "");
 
-        image.src = URL.createObjectURL(file);
+        formData.append("captions", captions.join("|"));
 
-        image.alt = file.name;
-
-        imagePreviews.appendChild(image);
-    }
-
-});
-
-async function createVideo() {
-
-    const images = document.getElementById("images").files;
-
-    const captions = document.getElementById("captions").value;
-
-    const duration = document.getElementById("duration").value;
-
-    const button = document.getElementById("generate");
-
-    const status = document.getElementById("status");
-
-    const video = document.getElementById("video");
-
-    const download = document.getElementById("download");
-
-    if (images.length === 0) {
-
-        status.innerText = "Please upload at least one image.";
-
-        return;
-    }
-
-    if (images.length > 20) {
-
-        status.innerText = "Maximum 20 images are allowed.";
-
-        return;
-    }
-
-    for (const image of images) {
-
-        if (image.size > 10 * 1024 * 1024) {
-
-            status.innerText =
-                "Each image must be smaller than 10 MB.";
-
-            return;
-        }
-    }
-
-    button.disabled = true;
-
-    button.innerText = "Creating your video...";
-
-    video.pause();
-
-    video.removeAttribute("src");
-
-    video.load();
-
-    video.style.display = "none";
-
-    download.style.display = "none";
-
-    status.innerText =
-        "Preparing your images and creating your MP4. Please wait...";
-
-    const formData = new FormData();
-
-    for (const image of images) {
-
-        formData.append("images", image);
-
-    }
-
-    const captionLines = captions
-        .split(/\r?\n/)
-        .map(line => line.trim());
-
-    formData.append("captions", captionLines.join("|"));
-
-    formData.append("seconds_per_image", duration);
-
-    try {
-
-        const response = await fetch(
-            "http://127.0.0.1:8000/create-free-video",
-            {
-                method: "POST",
-                body: formData
-            }
+        formData.append(
+            "seconds_per_image",
+            document.getElementById("duration").value
         );
 
-        const result = await response.json();
+        try {
 
-        if (!response.ok) {
-
-            throw new Error(
-                result.detail || "Video creation failed."
+            const response = await fetch(
+                `${API_BASE_URL}/create-free-video`,
+                {
+                    method: "POST",
+                    body: formData
+                }
             );
 
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.detail || "Video creation failed."
+                );
+            }
+
+            if (!result.video_url) {
+                throw new Error("The server did not return a video URL.");
+            }
+
+            // Convert the local backend URL into the deployed Render URL
+            const videoUrl =
+                API_BASE_URL + new URL(result.video_url).pathname;
+
+            const video = document.getElementById("video");
+
+            video.src = videoUrl;
+
+            document.getElementById("download").href = videoUrl;
+
+            document.getElementById("videoSection").classList.remove("hidden");
+
+            statusText.textContent = "✅ Your video is ready!";
+
+        } catch (error) {
+
+            statusText.textContent =
+                "❌ Error: " + error.message;
+
+        } finally {
+
+            createBtn.disabled = false;
+            createBtn.textContent = "🎥 Create Free Video";
+
         }
-
-        if (!result.video_url) {
-
-            throw new Error("No video URL was returned.");
-
-        }
-
-        video.src = result.video_url;
-
-        video.style.display = "block";
-
-        download.href = result.video_url;
-
-        download.style.display = "block";
-
-        status.innerText =
-            "Your video is ready! Scenes: " + result.scenes +
-            " | Duration: " + result.duration + " seconds.";
-
-        video.load();
-
-    } catch (error) {
-
-        status.innerText = "Error: " + error.message;
-
-        console.error(error);
-
-    } finally {
-
-        button.disabled = false;
-
-        button.innerText = "🎥 Create Free Video";
-
     }
-
-}
-
 </script>
 
 </body>
